@@ -24,6 +24,46 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+(defgroup ams-glossary nil
+  "Client to accessing AMS Glossary site."
+  :tag "ams-glossary"
+  :group 'external)
+
+(defcustom ag-site nil
+  "The AMS Glossary site."
+  :group 'ams-glossary)
+
+(defcustom ag-cache-dir "~/.ams-glossary/"
+  "Directory to store the cache."
+  :group 'ams-glossary
+  :type 'string)
+
+(defun ag-retrieve-callback (status term &optional dest)
+  (let* ((cdir (progn (unless (file-directory-p ag-cache-dir)
+                        (make-directory ag-cache-dir))
+                      (expand-file-name ag-cache-dir)))
+         (dest (or dest (format "%s%s.htm" (file-name-as-directory cdir)
+                                term)))
+;         (part (concat dest ".part"))
+         (buffer-file-coding-system 'no-conversion)
+         (require-final-newline nil))
+    ;; clean html header
+    (goto-char (point-min))
+    (re-search-forward "^$" nil 'move)
+    (forward-char)
+    (delete-region (point-min) (point))
+    (write-file dest)))
+
+(with-temp-buffer
+  (url-retrieve "http://amsglossary.allenpress.com/glossary/search?id=water-mass1"
+                'ag-retrieve-callback (list "term" "term")))
+
+(defun ag-run-search (query)
+  "Asks the user about query and searches, creates a new
+  *ams-glossary* buffer and shows definitions in it."
+  (interactive
+   (ag-read-query (thing-at-point 'word)))
+  (ag-run 'ag-search ))
 
 
 (provide 'ams-glossary)
