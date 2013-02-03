@@ -13,10 +13,13 @@ GL_URL_LIST_PREFIX= "http://glossary.ametsoc.org/index.php?title=Special:AllPage
 import string
 import re
 import urllib2
-from HTMLParser import HTMLParser
+import HTMLParser
 
 class TitleHTMLParser(HTMLParser):
-    titles_list = []
+    def __init__(self):
+        HTMLParser.HTMLParser.__init__(self)
+        self.titles_list = []
+
     def handle_starttag(self, tag, attrs):
         if tag == "a":
             for name, value in attrs:
