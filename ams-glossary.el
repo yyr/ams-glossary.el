@@ -24,6 +24,10 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+
+;;; Code:
+
 (defgroup ams-glossary nil
   "Client to accessing AMS Glossary site."
   :tag "ams-glossary"
@@ -59,8 +63,8 @@
                 'ag-retrieve-callback (list "term" "term")))
 
 (defun ag-run-search (query)
-  "Asks the user about query and searches, creates a new
-  *ams-glossary* buffer and shows definitions in it."
+  "Ask user for QUERY and search for it.
+Display search results in a *ams-glossary* buffer."
   (interactive
    (ag-read-query (thing-at-point 'word)))
   (ag-run 'ag-search ))
