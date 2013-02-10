@@ -69,7 +69,7 @@ def get_index_list(index_url = "http://glossary.ametsoc.org/wiki/Special:AllPage
     return index_urls
 
 
-def get_titles(index_urls):
+def parse_titles(index_url):
     """ Get titles list.
     """
     titls_list = []
@@ -83,20 +83,24 @@ def get_titles(index_urls):
 
     return titls_list
 
-def fetch_all_pages():
+def get_titles():
     titles_p = os.path.join(DATA_DIR,"titles.p")
 
     if not os.path.exists(titles_p):
         l = get_index_list()
-        titles = get_titles(l)
+        titles = parse_titles(l)
         # convert to dict
         a = {}
         for i in range(0,(len(titles))):
             a[titles[i][0]] = titles[i][1]
+        del a['/wiki/Special:AllPages'] # delete sneaked in title.
         pickle.dump(a, open(titles_p,"wb"))
 
     titles = pickle.load(open(titles_p,"rb"))
-    print(len(titles))
+    return titles
+
+def fetch_all_pages():
+    titles = get_titles()
 
 def main():
     fetch_all_pages()
