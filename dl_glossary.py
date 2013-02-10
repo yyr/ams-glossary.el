@@ -81,10 +81,6 @@ def get_titles(index_urls):
         reg = re.compile('<a href="([^"]*)" title="([^"]*)">.*</a></td>')
         matches = re.findall(reg,page)
         titls_list = matches + titls_list
-        # soup = BeautifulSoup(page)
-        # soup.prettify()
-        # tbody = soup.tbody
-        # title="46deg lateral arcs" href="/wiki/46deg_lateral_arcs">
 
     return titls_list
 
