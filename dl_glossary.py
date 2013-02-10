@@ -72,7 +72,6 @@ def get_index_list(index_url = "http://glossary.ametsoc.org/wiki/Special:AllPage
 def get_titles(index_urls):
     """ Get titles list.
     """
-    # from bs4 import BeautifulSoup
     titls_list = []
 
     for u  in index_urls:
@@ -87,15 +86,17 @@ def get_titles(index_urls):
 def fetch_all_pages():
     titles_p = os.path.join(DATA_DIR,"titles.p")
 
-    if not os.path.exists:
-        print("camehere")
+    if not os.path.exists(titles_p):
         l = get_index_list()
         titles = get_titles(l)
-        pickle.dump(titles, open(titles_p,"wb"))
-    titles = pickle.load(open(titles_p,"rb"))
+        # convert to dict
+        a = {}
+        for i in range(0,(len(titles))):
+            a[titles[i][0]] = titles[i][1]
+        pickle.dump(a, open(titles_p,"wb"))
 
-    # for val in reversed(titles):
-    #     print(val)
+    titles = pickle.load(open(titles_p,"rb"))
+    print(len(titles))
 
 def main():
     fetch_all_pages()
