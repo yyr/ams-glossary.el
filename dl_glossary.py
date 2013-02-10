@@ -69,19 +69,24 @@ def get_index_list(index_url = "http://glossary.ametsoc.org/wiki/Special:AllPage
     return index_urls
 
 
-def parse_titles(index_url):
+def parse_titles(index_urls):
     """ Get titles list.
     """
-    titls_list = []
+    titles = {}
+    from bs4 import BeautifulSoup
 
     for u  in index_urls:
         url = GL_URL_PREFIX + u
         page = get_save_page(url)
-        reg = re.compile('<a href="([^"]*)" title="([^"]*)">.*</a></td>')
-        matches = re.findall(reg,page)
-        titls_list = matches + titls_list
+        # reg = re.compile('<a href="([^"]*)" title="([^"]*)">.*</a></td>')
+        # matches = re.findall(reg,page)
+        soup = BeautifulSoup(page)
+        pages_chunk = soup.find('table', attrs={'class':"mw-allpages-table-chunk"})
+        links = pages_chunk.findAll('a')
+        for link in links:
+            titles[link.get('title')] = link.get('href')
 
-    return titls_list
+    return titles
 
 def get_titles():
     titles_p = os.path.join(DATA_DIR,"titles.p")
@@ -89,12 +94,7 @@ def get_titles():
     if not os.path.exists(titles_p):
         l = get_index_list()
         titles = parse_titles(l)
-        # convert to dict
-        a = {}
-        for i in range(0,(len(titles))):
-            a[titles[i][0]] = titles[i][1]
-        del a['/wiki/Special:AllPages'] # delete sneaked in title.
-        pickle.dump(a, open(titles_p,"wb"))
+        pickle.dump(titles, open(titles_p,"wb"))
 
     titles = pickle.load(open(titles_p,"rb"))
     return titles
