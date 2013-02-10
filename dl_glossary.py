@@ -18,6 +18,7 @@ import os
 import string
 import re
 import urllib2
+from bs4 import BeautifulSoup
 
 GL_URL_PREFIX = "http://glossary.ametsoc.org"
 file_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
@@ -61,25 +62,23 @@ def get_index_list(index_url = "http://glossary.ametsoc.org/wiki/Special:AllPage
     """
     index_urls = []
     page = get_save_page(index_url)
+    soup = BeautifulSoup(page)
+    pages_chunk = soup.find('table', attrs={'class':"allpageslist"})
+    links = pages_chunk.findAll('a')
+    for link  in links:
+        index_urls.append(link.get('href'))
 
-    reg = re.compile('<td class="mw-allpages-alphaindexline"><a href="([^"]*)">')
-    index_urls = re.findall(reg,page)
-    index_urls = [ re.sub("&amp;", "&", l) for l in index_urls] #  decode ampersand
-    re.findall("&amp;","&")
-    return index_urls
+    return set(index_urls)      # uniquify
 
 
 def parse_titles(index_urls):
     """ Get titles list.
     """
     titles = {}
-    from bs4 import BeautifulSoup
 
     for u  in index_urls:
         url = GL_URL_PREFIX + u
         page = get_save_page(url)
-        # reg = re.compile('<a href="([^"]*)" title="([^"]*)">.*</a></td>')
-        # matches = re.findall(reg,page)
         soup = BeautifulSoup(page)
         pages_chunk = soup.find('table', attrs={'class':"mw-allpages-table-chunk"})
         links = pages_chunk.findAll('a')
