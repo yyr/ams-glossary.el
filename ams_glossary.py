@@ -62,12 +62,9 @@ def get_save_page(url,local_file = None):
 
 
 class AmsGlossary(object):
-    """
-    """
-
+    """ """
     def __init__(self):
-        """
-        """
+        self.base_url = "http://glossary.ametsoc.org"
         self.index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
         self.titles = self.get_titles()
 
@@ -100,6 +97,7 @@ class AmsGlossary(object):
 
         return titles
 
+
     def get_titles(self):
         titles_p = os.path.join(DATA_DIR,"titles.p")
 
@@ -110,8 +108,14 @@ class AmsGlossary(object):
         titles = pickle.load(open(titles_p,"rb"))
         return titles
 
+    def fetch_all_pages(self):
+        for key in self.titles:
+            print(key)
+
+
+
 def main():
-    pages = AmsGlossary()
+    glossary = AmsGlossary()
 
 if __name__ == '__main__':
     main()
