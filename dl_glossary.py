@@ -24,14 +24,16 @@ GL_URL_PREFIX = "http://glossary.ametsoc.org"
 file_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
 DATA_DIR = os.path.join(file_path,'data')
 
-def get_save_page(url,local_file = ''):
+def get_save_page(url,local_file = None):
     """fetch given url and save it to data directory.
     """
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
 
-    local_file = os.path.join(DATA_DIR , url.split('/')[-1] + ".html")
-    print("Fetching.. " + url)
+    if local_file is None:
+        local_file = url.split('/')[-1]
+
+    local_file = os.path.join(DATA_DIR ,  local_file)
 
     if os.path.exists(local_file):
         fh = open(local_file, "rb")
@@ -40,6 +42,7 @@ def get_save_page(url,local_file = ''):
         return page
 
     else:
+        print("Fetching.. '" + url + "' saving as " + local_file)
         fh = open(local_file, "wb")
         user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
         r = urllib2.Request(url=url,headers={'User-Agent' : user_agent})
