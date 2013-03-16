@@ -104,7 +104,6 @@ class GlossaryPages(object):
         titles_p = os.path.join(DATA_DIR,"titles.p")
 
         if not os.path.exists(titles_p):
-            l = self.get_index_list()
             titles = self.parse_titles()
             pickle.dump(titles, open(titles_p,"wb"))
 
