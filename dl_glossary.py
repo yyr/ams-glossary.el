@@ -24,6 +24,7 @@ GL_URL_PREFIX = "http://glossary.ametsoc.org"
 file_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
 DATA_DIR = os.path.join(file_path,'data')
 
+
 def get_save_page(url,local_file = None):
     """fetch given url and save it to data directory.
     """
@@ -60,52 +61,58 @@ def get_save_page(url,local_file = None):
             sys.exit()
 
 
-def get_index_list(index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"):
-    """ Get list of index files.
+class GlossaryPages(object):
     """
-    index_urls = []
-    page = get_save_page(index_url)
-    soup = BeautifulSoup(page)
-    pages_chunk = soup.find('table', attrs={'class':"allpageslist"})
-    links = pages_chunk.findAll('a')
-    for link  in links:
-        index_urls.append(link.get('href'))
-
-    return set(index_urls)      # uniquify
-
-
-def parse_titles(index_urls):
-    """ Get titles list.
     """
-    titles = {}
 
-    for u  in index_urls:
-        url = GL_URL_PREFIX + u
-        page = get_save_page(url)
+    def __init__(self):
+        """
+        """
+        self.index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
+        self.index_urls = self.get_index_list()
+        self.titles = self.get_titles()
+
+    def get_index_list(self):
+        """ Get list of index files."""
+        index_urls = []
+        page = get_save_page(self.index_url)
         soup = BeautifulSoup(page)
-        pages_chunk = soup.find('table', attrs={'class':"mw-allpages-table-chunk"})
+        pages_chunk = soup.find('table', attrs={'class':"allpageslist"})
         links = pages_chunk.findAll('a')
-        for link in links:
-            titles[link.get('title')] = link.get('href')
+        for link  in links:
+            index_urls.append(link.get('href'))
 
-    return titles
+        return set(index_urls)      # uniquify
 
-def get_titles():
-    titles_p = os.path.join(DATA_DIR,"titles.p")
 
-    if not os.path.exists(titles_p):
-        l = get_index_list()
-        titles = parse_titles(l)
-        pickle.dump(titles, open(titles_p,"wb"))
+    def parse_titles(self):
+        """ Get titles list. """
+        titles = {}
 
-    titles = pickle.load(open(titles_p,"rb"))
-    return titles
+        for u  in self.index_urls:
+            url = GL_URL_PREFIX + u
+            page = get_save_page(url)
+            soup = BeautifulSoup(page)
+            pages_chunk = soup.find('table', attrs={'class':"mw-allpages-table-chunk"})
+            links = pages_chunk.findAll('a')
+            for link in links:
+                titles[link.get('title')] = link.get('href')
 
-def fetch_all_pages():
-    titles = get_titles()
+        return titles
+
+    def get_titles(self):
+        titles_p = os.path.join(DATA_DIR,"titles.p")
+
+        if not os.path.exists(titles_p):
+            l = self.get_index_list()
+            titles = self.parse_titles()
+            pickle.dump(titles, open(titles_p,"wb"))
+
+        titles = pickle.load(open(titles_p,"rb"))
+        return titles
 
 def main():
-    fetch_all_pages()
+    pages = GlossaryPages()
 
 if __name__ == '__main__':
     main()
