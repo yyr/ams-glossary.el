@@ -61,7 +61,7 @@ def get_save_page(url,local_file = None):
             sys.exit()
 
 
-class GlossaryPages(object):
+class AmsGlossary(object):
     """
     """
 
@@ -69,7 +69,6 @@ class GlossaryPages(object):
         """
         """
         self.index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
-        self.index_urls = self.get_index_list()
         self.titles = self.get_titles()
 
     def get_index_list(self):
@@ -87,8 +86,9 @@ class GlossaryPages(object):
 
     def parse_titles(self):
         """ Get titles list. """
-        titles = {}
+        self.index_urls = self.get_index_list()
 
+        titles = {}
         for u  in self.index_urls:
             url = GL_URL_PREFIX + u
             page = get_save_page(url)
@@ -111,7 +111,7 @@ class GlossaryPages(object):
         return titles
 
 def main():
-    pages = GlossaryPages()
+    pages = AmsGlossary()
 
 if __name__ == '__main__':
     main()
