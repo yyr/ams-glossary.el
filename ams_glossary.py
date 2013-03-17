@@ -113,9 +113,43 @@ class AmsGlossary(object):
             print(key)
 
 
+def get_caseinsensitive_key(d,k):
+    return [key for key in d if key.lower() == k.lower()]
 
-def main():
+def title_search(ks,word):
+    searchedKeys = [key for key in ks
+                    if word.lower() in key.lower()]
+    print('  ' + '\n  '.join(searchedKeys))
+
+
+
+def arg_parse(word=None,
+              search=None):
     glossary = AmsGlossary()
+
+    if word is not None:
+        key = get_caseinsensitive_key(glossary.titles,word)
+        if len(key) == 1:
+            print('Entry found as: ' +  ' '.join(key))
+            print(glossary.titles[key[0]])
+        else:
+            print('No exact entry found, continue to look title..')
+            title_search(glossary.titles.keys(),word)
+
+    elif search is not None:
+        title_search(glossary.titles.keys(),search)
+
+
+def main(args=None):
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('word',nargs='?')
+    parser.add_argument('-s','--search')
+    if len(sys.argv) == 1:
+        parser.print_help()
+    else:
+        arg_parse(**vars(parser.parse_args(args)))
+
 
 if __name__ == '__main__':
     main()
