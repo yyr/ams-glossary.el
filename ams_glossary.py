@@ -128,8 +128,8 @@ class AmsGlossary(object):
             self.fetch_title_page(key,self.base_url + self.titles[key])
         return
 
-
-
+    def build_database(self):
+        self.fetch_all_title_pages()
 
 def arg_parse(title=None,
               search=None,
@@ -154,7 +154,7 @@ def arg_parse(title=None,
         title_search(glossary.titles.keys(),search)
 
     elif build_database:
-        glossary.fetch_all_title_pages()
+        glossary.build_database()
 
 
 def main(args=None):
