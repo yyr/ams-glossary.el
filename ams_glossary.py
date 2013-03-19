@@ -57,6 +57,9 @@ def get_save_page(url,local_file = None):
             print('Generic exception: ' + traceback.format_exc())
             sys.exit()
 
+def get_caseinsensitive_key(d,k):
+    return [key for key in d if key.lower() == k.lower()]
+
 
 class AmsGlossary(object):
     """Ams glossary data class. Pages, Titles, Fetch ala.."""
@@ -127,18 +130,15 @@ class AmsGlossary(object):
 
 
 
-def get_caseinsensitive_key(d,k):
-    return [key for key in d if key.lower() == k.lower()]
-
-def title_search(ks,title):
-    searchedKeys = [key for key in ks
-                    if title.lower() in key.lower()]
-    print('  ' + '\n  '.join(searchedKeys))
-
 
 def arg_parse(title=None,
               search=None,
               build_database=False):
+    def title_search(ks,title):
+        searchedKeys = [key for key in ks
+                        if title.lower() in key.lower()]
+        print('  ' + '\n  '.join(searchedKeys))
+
     glossary = AmsGlossary()
 
     if title is not None:
