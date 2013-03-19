@@ -24,7 +24,6 @@ GL_URL_PREFIX = "http://glossary.ametsoc.org"
 file_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
 DATA_DIR = os.path.join(file_path,'data')
 
-
 def get_save_page(url,local_file = None):
     """fetch given url and save it to data directory.
     """
@@ -38,12 +37,10 @@ def get_save_page(url,local_file = None):
 
     if os.path.exists(local_file):
         fh = open(local_file, "rb")
-        print(local_file + " is already exists, skipping ..")
         page = fh.read()
         return page
 
     else:
-        print("Fetching.. '" + url + "' saving as " + local_file)
         fh = open(local_file, "wb")
         user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
         r = urllib2.Request(url=url,headers={'User-Agent' : user_agent})
