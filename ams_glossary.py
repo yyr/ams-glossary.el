@@ -62,7 +62,7 @@ def get_save_page(url,local_file = None):
 
 
 class AmsGlossary(object):
-    """ """
+    """Ams glossary data class. Pages, Titles, Fetch ala.."""
     def __init__(self):
         self.base_url = "http://glossary.ametsoc.org"
         self.index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
@@ -121,25 +121,25 @@ class AmsGlossary(object):
 def get_caseinsensitive_key(d,k):
     return [key for key in d if key.lower() == k.lower()]
 
-def title_search(ks,word):
+def title_search(ks,title):
     searchedKeys = [key for key in ks
-                    if word.lower() in key.lower()]
+                    if title.lower() in key.lower()]
     print('  ' + '\n  '.join(searchedKeys))
 
 
-def arg_parse(word=None,
+def arg_parse(title=None,
               search=None,
               build_database=False):
     glossary = AmsGlossary()
 
-    if word is not None:
-        key = get_caseinsensitive_key(glossary.titles,word)
+    if title is not None:
+        key = get_caseinsensitive_key(glossary.titles,title)
         if len(key) == 1:
             print('Entry found as: ' +  ' '.join(key))
-            glossary.define_word(key[0])
+            glossary.define_title(key[0])
         else:
             print('No exact entry found, continue to look title..')
-            title_search(glossary.titles.keys(),word)
+            title_search(glossary.titles.keys(),title)
 
     elif search is not None:
         title_search(glossary.titles.keys(),search)
@@ -151,7 +151,7 @@ def arg_parse(word=None,
 def main(args=None):
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('word',nargs='?')
+    parser.add_argument('title',nargs='?')
     parser.add_argument('-s','--search')
     parser.add_argument('-bd','--build-database',action="store_true")
 
