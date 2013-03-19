@@ -108,9 +108,14 @@ class AmsGlossary(object):
         titles = pickle.load(open(titles_p,"rb"))
         return titles
 
-    def fetch_all_pages(self):
-        for key in self.titles:
-            print(key)
+    def fetch_title_page(self,title,url):
+        get_save_page(url)
+
+    def fetch_all_title_pages(self):
+        for key in self.titles.keys():
+            self.fetch_title_page(key,self.base_url + self.titles[key])
+        return
+
 
 
 def get_caseinsensitive_key(d,k):
@@ -122,16 +127,16 @@ def title_search(ks,word):
     print('  ' + '\n  '.join(searchedKeys))
 
 
-
 def arg_parse(word=None,
-              search=None):
+              search=None,
+              build_database=False):
     glossary = AmsGlossary()
 
     if word is not None:
         key = get_caseinsensitive_key(glossary.titles,word)
         if len(key) == 1:
             print('Entry found as: ' +  ' '.join(key))
-            print(glossary.titles[key[0]])
+            glossary.define_word(key[0])
         else:
             print('No exact entry found, continue to look title..')
             title_search(glossary.titles.keys(),word)
@@ -139,12 +144,17 @@ def arg_parse(word=None,
     elif search is not None:
         title_search(glossary.titles.keys(),search)
 
+    elif build_database:
+        glossary.fetch_all_title_pages()
+
 
 def main(args=None):
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('word',nargs='?')
     parser.add_argument('-s','--search')
+    parser.add_argument('-bd','--build-database',action="store_true")
+
     if len(sys.argv) == 1:
         parser.print_help()
     else:
