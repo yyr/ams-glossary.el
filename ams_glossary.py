@@ -101,13 +101,18 @@ class AmsGlossary(object):
         return self.base_url + self.titles[title]
 
 
-    def define_title(self,title):
-        """"""
+    def define_title(self,title,form='text'):
+        """return given title. form argument either text or raw
+        """
         page = get_save_page(self.title_url(title))
         soup = BeautifulSoup(page)
         page_chunk = soup.find(
             'div', attrs={'class':"termentry"})
-        print(page_chunk.getText())
+        if form=='raw':
+            return page_chunk
+        else:
+            return page_chunk.getText()
+
 
 
     def get_titles(self):
@@ -131,21 +136,22 @@ class AmsGlossary(object):
     def build_database(self):
         self.fetch_all_title_pages()
 
-def arg_parse(title=None,
-              search=None,
-              build_database=False):
+
+
+def arg_parse(title=None, search=None,
+              build_database=False, form=None):
+    glossary = AmsGlossary()
+
     def title_search(ks,title):
         searchedKeys = [key for key in ks
                         if title.lower() in key.lower()]
         print('  ' + '\n  '.join(searchedKeys))
 
-    glossary = AmsGlossary()
-
     if title is not None:
         key = get_caseinsensitive_key(glossary.titles,title)
         if len(key) == 1:
             print('Entry found as: ' +  ' '.join(key))
-            glossary.define_title(key[0])
+            print(glossary.define_title(key[0],form=form))
         else:
             print('No exact entry found, continue to look title..')
             title_search(glossary.titles.keys(),title)
@@ -161,6 +167,10 @@ def main(args=None):
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('title',nargs='?')
+
+    forms = ['raw','text']
+    parser.add_argument('-f','--format',dest='form',
+                        default='text', choices=forms)
     parser.add_argument('-s','--search')
     parser.add_argument('-bd','--build-database',action="store_true")
 
