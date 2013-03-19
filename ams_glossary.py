@@ -94,6 +94,18 @@ class AmsGlossary(object):
 
         return titles
 
+    def title_url(self,title):
+        return self.base_url + self.titles[title]
+
+
+    def define_title(self,title):
+        """"""
+        page = get_save_page(self.title_url(title))
+        soup = BeautifulSoup(page)
+        page_chunk = soup.find(
+            'div', attrs={'class':"termentry"})
+        print(page_chunk.getText())
+
 
     def get_titles(self):
         titles_p = os.path.join(DATA_DIR,"titles.p")
