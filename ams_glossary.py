@@ -108,7 +108,7 @@ class AmsGlossary(object):
         soup = BeautifulSoup(page)
         page_chunk = soup.find(
             'div', attrs={'class':"termentry"})
-        if form=='raw':
+        if form=='html':
             return page_chunk
         else:
             return page_chunk.getText()
@@ -168,9 +168,8 @@ def main(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('title',nargs='?')
 
-    forms = ['raw','text']
     parser.add_argument('-f','--format',dest='form',
-                        default='text', choices=forms)
+                        default='text', choices=['html','text'])
     parser.add_argument('-s','--search')
     parser.add_argument('-bd','--build-database',action="store_true")
 
