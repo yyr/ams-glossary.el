@@ -11,12 +11,8 @@ LICENSE ="GPL v3 or later"
 import sys
 PY3 = (sys.version_info[0] >= 3 )
 
+import inspect, os
 import pickle
-import inspect
-
-import os
-import string
-import re
 import urllib2
 from bs4 import BeautifulSoup
 
