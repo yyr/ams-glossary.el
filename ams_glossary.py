@@ -90,11 +90,11 @@ class AmsGlossary(object):
             url = GL_URL_PREFIX + u
             page = get_save_page(url)
             soup = BeautifulSoup(page)
-            pages_chunk = soup.find('table', attrs={'class':"mw-allpages-table-chunk"})
+            pages_chunk = soup.find(
+                'table', attrs={'class':"mw-allpages-table-chunk"})
             links = pages_chunk.findAll('a')
             for link in links:
                 titles[link.get('title')] = link.get('href')
-
         return titles
 
     def title_url(self,title):
