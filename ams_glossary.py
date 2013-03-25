@@ -60,18 +60,18 @@ def get_save_page(url,local_file = None):
 def get_caseinsensitive_key(d,k):
     return [key for key in d if key.lower() == k.lower()]
 
-
 class AmsGlossary(object):
     """Ams glossary data class. Pages, Titles, Fetch ala.."""
     def __init__(self):
-        self.base_url = "http://glossary.ametsoc.org"
-        self.index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
+        self._titles_p = os.path.join(DATA_DIR,"titles.p")
+        self._base_url = "http://glossary.ametsoc.org"
+        self._index_url = "http://glossary.ametsoc.org/wiki/Special:AllPages"
         self.titles = self.get_titles()
 
     def get_index_list(self):
         """ Get list of index files."""
         index_urls = []
-        page = get_save_page(self.index_url)
+        page = get_save_page(self._index_url)
         soup = BeautifulSoup(page)
         pages_chunk = soup.find('table', attrs={'class':"allpageslist"})
         links = pages_chunk.findAll('a')
@@ -83,7 +83,7 @@ class AmsGlossary(object):
 
     def parse_titles(self):
         """ Get titles list. """
-        self.index_urls = self.get_index_list()
+        self._index_urls = self.get_index_list()
 
         titles = {}
         for u  in self.index_urls:
@@ -98,8 +98,7 @@ class AmsGlossary(object):
         return titles
 
     def title_url(self,title):
-        return self.base_url + self.titles[title]
-
+        return self._base_url + self.titles[title]
 
     def define_title(self,title,form='text'):
         """return given title. form argument either text or raw
@@ -113,16 +112,14 @@ class AmsGlossary(object):
         else:
             return page_chunk.getText()
 
+    def update_titles_list(self,force):
+        if not os.path.exists(self._titles_p):
+            titles = self.parse_titles()
+            pickle.dump(titles, open(self._titles_p,"wb"))
+        return
 
     def get_titles(self):
-        titles_p = os.path.join(DATA_DIR,"titles.p")
-
-        if not os.path.exists(titles_p):
-            titles = self.parse_titles()
-            pickle.dump(titles, open(titles_p,"wb"))
-
-        titles = pickle.load(open(titles_p,"rb"))
-        return titles
+        return pickle.load(open(self._titles_p,"rb"))
 
     def fetch_title_page(self,title):
         return get_save_page(self.title_url(title))
