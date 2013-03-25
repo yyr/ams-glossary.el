@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-'''
-Download all pages from AMS glossary site.
+'''Define a meteorological title from AMS glossary. By default this program
+fetches a page from AMS glossary website. For offline reading you can download
+all pages from AMS glossary website.
 '''
 
 DATE = "Saturday, February  2 2013"
@@ -168,7 +169,9 @@ def arg_parse(title=None, search=None,
 
 def main(args=None):
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawTextHelpFormatter,
+        description=__doc__)
     parser.add_argument('title',nargs='?')
 
     parser.add_argument('-f','--format',dest='form',
