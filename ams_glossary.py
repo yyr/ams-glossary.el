@@ -104,7 +104,7 @@ class AmsGlossary(object):
     def define_title(self,title,form='text'):
         """return given title. form argument either text or raw
         """
-        page = get_save_page(self.title_url(title))
+        page = self.fetch_title_page(title)
         soup = BeautifulSoup(page)
         page_chunk = soup.find(
             'div', attrs={'class':"termentry"})
@@ -112,7 +112,6 @@ class AmsGlossary(object):
             return page_chunk
         else:
             return page_chunk.getText()
-
 
 
     def get_titles(self):
@@ -125,21 +124,32 @@ class AmsGlossary(object):
         titles = pickle.load(open(titles_p,"rb"))
         return titles
 
-    def fetch_title_page(self,title,url):
-        get_save_page(url)
+    def fetch_title_page(self,title):
+        return get_save_page(self.title_url(title))
 
     def fetch_all_title_pages(self):
-        for key in self.titles.keys():
-            self.fetch_title_page(key,self.base_url + self.titles[key])
+        for title in self.titles.keys():
+            self.fetch_title_page(title)
         return
 
-    def build_database(self):
-        self.fetch_all_title_pages()
-
+    def build_database(self,force=False):
+        self.ams_db_html = {}
+        db_html = os.path.join(DATA_DIR,"ams_db_html")
+        if force or not os.path.exists(db_html):
+            for i, title in enumerate(self.titles.keys()):
+                self.fetch_title_page(title)
+                self.ams_db_html[title] = get_save_page(self.title_url(title))
+            pickle.dump(self.ams_db_html, open(db_html,"wb"))
+        else:
+            print('Seems, there is already database available,'+
+                  'Give --force option to build it from scratch.')
+        return
 
 
 def arg_parse(title=None, search=None,
-              build_database=False, form=None):
+              build_database=False,
+              form=None,
+              force=False):
     glossary = AmsGlossary()
 
     def title_search(ks,title):
@@ -160,7 +170,7 @@ def arg_parse(title=None, search=None,
         title_search(glossary.titles.keys(),search)
 
     elif build_database:
-        glossary.build_database()
+        glossary.build_database(force)
 
 
 def main(args=None):
@@ -172,6 +182,7 @@ def main(args=None):
                         default='text', choices=['html','text'])
     parser.add_argument('-s','--search')
     parser.add_argument('-bd','--build-database',action="store_true")
+    parser.add_argument('--force',action="store_true")
 
     if len(sys.argv) == 1:
         parser.print_help()
