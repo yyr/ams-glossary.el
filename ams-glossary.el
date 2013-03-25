@@ -3,6 +3,8 @@
 ;; Copyright (C) 2012 Yagnesh Raghava Yakkala <http://yagnesh.org>
 
 ;; Author: Yagnesh Raghava Yakkala <yagnesh@live.com>
+;; Package-Requires: ((epc "0.1.0"))
+;; Version: 0.1dev
 ;; URL: https://github.com/yyr/ams-glossary.el
 ;; Maintainer: Yagnesh Raghava Yakkala <yagnesh@live.com>
 ;; Created: Sat Oct 20, 2012
@@ -28,6 +30,8 @@
 
 ;;; Code:
 
+(require 'epc)
+
 (defgroup ams-glossary nil
   "Client to accessing AMS Glossary site."
   :tag "ams-glossary"
@@ -37,38 +41,15 @@
   "The AMS Glossary site."
   :group 'ams-glossary)
 
+(defconst ams-glossary-version "0.1dev")
+
+(defvar ag-dir (file-name-directory
+                        (or load-file-name buffer-file-name)))
+
 (defcustom ag-cache-dir "~/.ams-glossary/"
   "Directory to store the cache."
   :group 'ams-glossary
   :type 'string)
-
-(defun ag-retrieve-callback (status term &optional dest)
-  (let* ((cdir (progn (unless (file-directory-p ag-cache-dir)
-                        (make-directory ag-cache-dir))
-                      (expand-file-name ag-cache-dir)))
-         (dest (or dest (format "%s%s.htm" (file-name-as-directory cdir)
-                                term)))
-;         (part (concat dest ".part"))
-         (buffer-file-coding-system 'no-conversion)
-         (require-final-newline nil))
-    ;; clean html header
-    (goto-char (point-min))
-    (re-search-forward "^$" nil 'move)
-    (forward-char)
-    (delete-region (point-min) (point))
-    (write-file dest)))
-
-(with-temp-buffer
-  (url-retrieve "http://amsglossary.allenpress.com/glossary/search?id=water-mass1"
-                'ag-retrieve-callback (list "term" "term")))
-
-(defun ag-run-search (query)
-  "Ask user for QUERY and search for it.
-Display search results in a *ams-glossary* buffer."
-  (interactive
-   (ag-read-query (thing-at-point 'word)))
-  (ag-run 'ag-search ))
-
 
 (provide 'ams-glossary)
 ;;; ams-glossary.el ends here
