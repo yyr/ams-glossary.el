@@ -20,17 +20,18 @@ from bs4 import BeautifulSoup
 GL_URL_PREFIX = "http://glossary.ametsoc.org"
 file_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
 DATA_DIR = os.path.join(file_path,'data')
+PAGES_DIR = os.path.join(file_path,'pages') # location to keep downloaded html pages.
 
 def get_save_page(url,local_file = None):
     """fetch given url and save it to data directory.
     """
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
+    if not os.path.exists(PAGES_DIR):
+        os.makedirs(PAGES_DIR)
 
     if local_file is None:
         local_file = url.split('/')[-1]
 
-    local_file = os.path.join(DATA_DIR ,  local_file)
+    local_file = os.path.join(PAGES_DIR ,  local_file)
 
     if os.path.exists(local_file):
         fh = open(local_file, "rb")
