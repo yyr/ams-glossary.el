@@ -128,13 +128,13 @@ class AmsGlossary(object):
         return
 
     def build_database(self,force=False):
-        self.ams_db_html = {}
-        db_html = os.path.join(DATA_DIR,"ams_db_html")
+        self.db_html = {}
+        db_html = os.path.join(DATA_DIR,"db_html")
         if force or not os.path.exists(db_html):
             for i, title in enumerate(self.titles.keys()):
                 self.fetch_title_page(title)
-                self.ams_db_html[title] = get_save_page(self.title_url(title))
-            pickle.dump(self.ams_db_html, open(db_html,"wb"))
+                self.db_html[title] = get_save_page(self.title_url(title))
+            pickle.dump(self.db_html, open(db_html,"wb"))
         else:
             print('Seems, there is already database available,'+
                   'Give --force option to build it from scratch.')
