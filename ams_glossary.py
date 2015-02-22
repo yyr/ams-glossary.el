@@ -141,9 +141,15 @@ class AmsGlossary(object):
         return
 
 
+
+def prepare_elisp_file():
+    pass
+
+
 def arg_parse(title=None, search=None,
               build_database=False,
               form=None,
+              list_titles=False,
               force=False):
     glossary = AmsGlossary()
 
@@ -164,6 +170,9 @@ def arg_parse(title=None, search=None,
     elif search is not None:
         title_search(glossary.titles.keys(),search)
 
+    elif list_titles is not None:
+        print(' ' + '\n '.join(glossary.titles.keys()))
+
     elif build_database:
         glossary.build_database(force)
 
@@ -180,6 +189,7 @@ def main(args=None):
     parser.add_argument('-s','--search')
     parser.add_argument('-bd','--build-database',action="store_true")
     parser.add_argument('--force',action="store_true")
+    parser.add_argument('-l','--list_titles',action="store_true")
 
     if len(sys.argv) == 1:
         parser.print_help()
