@@ -1,10 +1,10 @@
 ;;; ams-glossary.el -- Read AMS glossary from Emacs
 
-;; Copyright (C) 2012 Yagnesh Raghava Yakkala <http://yagnesh.org>
+;; Copyright (C) 2012, 2015 Yagnesh Raghava Yakkala <http://yagnesh.org>
 
 ;; Author: Yagnesh Raghava Yakkala <yagnesh@live.com>
-;; Package-Requires: ((epc "0.1.0"))
-;; Version: 0.1dev
+;; Package-Requires: ((s))
+;; Version: 0.1
 ;; URL: https://github.com/yyr/ams-glossary.el
 ;; Maintainer: Yagnesh Raghava Yakkala <yagnesh@live.com>
 ;; Created: Sat Oct 20, 2012
@@ -30,7 +30,8 @@
 
 ;;; Code:
 
-(require 'epc)
+(require 's)
+(require 'ag-titles)
 
 (defgroup ams-glossary nil
   "Client to accessing AMS Glossary site."
@@ -41,15 +42,30 @@
   "The AMS Glossary site."
   :group 'ams-glossary)
 
-(defconst ams-glossary-version "0.1dev")
-
 (defvar ag-dir (file-name-directory
                         (or load-file-name buffer-file-name)))
+
+(defconst ag-home-url "http://glossary.ametsoc.org/")
+(defconst ag-term-url-template "http://glossary.ametsoc.org/wiki/%s")
+
 
 (defcustom ag-cache-dir "~/.ams-glossary/"
   "Directory to store the cache."
   :group 'ams-glossary
   :type 'string)
+
+(defvar ag-sample-term "oasis effect")
+
+(defun ag-term-sanitize (term)
+  (s-replace " " "_" term))
+
+(defun ag-construct-url (term)
+  (format ag-term-url-template (s-capitalize (ag-term-sanitize term))))
+
+(defun ag-browse-term (term)
+  (browse-url (ag-construct-url term)))
+
+()
 
 (provide 'ams-glossary)
 ;;; ams-glossary.el ends here
