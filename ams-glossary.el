@@ -1,6 +1,6 @@
 ;;; ams-glossary.el -- Read AMS glossary from Emacs
 
-;; Copyright (C) 2012, 2015 Yagnesh Raghava Yakkala <http://yagnesh.org>
+;; Copyright (C) 2012, 2015, 2016 Yagnesh Raghava Yakkala <http://yagnesh.org>
 
 ;; Author: Yagnesh Raghava Yakkala <yagnesh@live.com>
 ;; Package-Requires: ((s))
@@ -168,8 +168,6 @@
   "Quit ag-search buffer."
   (interactive)
   (set-window-configuration ag-search-return-window-config))
-
-
 
 (provide 'ams-glossary)
 ;;; ams-glossary.el ends here
